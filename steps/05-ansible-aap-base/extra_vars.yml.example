@@ -1,0 +1,11 @@
+---
+scm_url: https://github.com/GlennChia/ansible-playbook-tf-actions-aap-demo
+playbook_name: playbook.yml
+ssh_username: ec2-user
+approle_path: approle
+approle_role_id: eeeeeeee-dddd-cccc-bbbb-aaaaaaaaaaaa
+approle_secret_id: aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
+ssh_secrets_engine_path: ssh-client-signer
+ssh_secret_backend_role_name: demo-role
+vault_address: https://vault-cluster-public-vault-aaaaaaaa.bbbbbbbb.z1.hashicorp.cloud:8200
+vault_namespace: admin
