@@ -1,0 +1,79 @@
+---
+- name: Install Nginx with Custom UI
+  hosts: all
+  become: true
+  tasks:
+    - name: Install Nginx
+      ansible.builtin.dnf:
+        name: nginx
+        state: present
+
+    - name: Create custom index.html directory if it doesn't exist
+      ansible.builtin.file:
+        path: /usr/share/nginx/html
+        state: directory
+        mode: '0755'
+
+    - name: Create custom index.html for AAP demo
+      ansible.builtin.copy:
+        content: |
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>TF Actions with AAP</title>
+              <style>
+                body {
+                  font-family: Arial, sans-serif;
+                  background-color: #1e1e1e;
+                  color: #e0e0e0;
+                  margin: 0;
+                  padding: 0;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  height: 100vh;
+                }
+                .container {
+                  text-align: center;
+                  background-color: #2d2d2d;
+                  padding: 40px;
+                  border-radius: 8px;
+                  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+                  border-top: 3px solid #A067DA;
+                }
+                h1 {
+                  color: #A067DA;
+                  margin-top: 0;
+                }
+                p {
+                  margin: 10px 0;
+                  color: #b0b0b0;
+                }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <h1>Terraform Actions with Ansible Automation Platform demo</h1>
+                <p>This VM was configured using Ansible Automation Platform</p>
+                <p>VM: {{ ansible_hostname }}</p>
+                <p>IP: {{ ansible_host }}</p>
+                <p>Date: {{ ansible_date_time.iso8601 }}</p>
+                <p>Variable from TF aap_job_launch: {{ var_from_tf_aap_job_launch | default('not defined') }}</p>
+              </div>
+            </body>
+          </html>
+        dest: /usr/share/nginx/html/index.html
+        mode: '0644'
+      notify: Restart nginx
+
+    - name: Enable and start Nginx
+      ansible.builtin.systemd:
+        name: nginx
+        enabled: true
+        state: started
+
+  handlers:
+    - name: Restart nginx
+      ansible.builtin.systemd:
+        name: nginx
+        state: restarted
