@@ -1,0 +1,3 @@
+region             = "us-east-1"
+hvn_id             = "hcp-vault"
+vault_cluster_tier = "standard_small"
