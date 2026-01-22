@@ -1,0 +1,5 @@
+region                  = "us-east-1"
+ami_name_prefix         = "al2023-vault-ssh-ca"
+vault_ssh_ca_public_key = <<-EOT
+ssh-rsa example
+EOT
