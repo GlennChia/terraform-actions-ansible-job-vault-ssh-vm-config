@@ -1,0 +1,71 @@
+---
+- name: Delete AAP credentials, project, inventory, and job template
+  hosts: localhost
+  gather_facts: false
+  vars:
+    organization: Default
+
+    vault_approle_credential_name: "vault-approle-ssh"
+    vault_signed_ssh_machine_credential_name: "vault-signed-ssh-credential"
+    controller_project_name: "demo-project"
+    job_template_name: "demo-job-template"
+    inventory_name: "demo-inventory"
+
+    controller_host: "{{ lookup('env', 'CONTROLLER_HOST') }}"
+    controller_username: "{{ lookup('env', 'CONTROLLER_USERNAME') }}"
+    controller_password: "{{ lookup('env', 'CONTROLLER_PASSWORD') }}"
+    controller_validate_certs: false
+  tasks:
+    # Delete Job Template first since it depends on other resources
+    - name: Delete Job Template
+      ansible.controller.job_template:
+        name: "{{ job_template_name }}"
+        organization: "{{ organization }}"
+        controller_host: "{{ controller_host }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
+        validate_certs: "{{ controller_validate_certs }}"
+        state: absent
+
+    # Delete Inventory
+    - name: Delete Inventory
+      ansible.controller.inventory:
+        name: "{{ inventory_name }}"
+        organization: "{{ organization }}"
+        controller_host: "{{ controller_host }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
+        validate_certs: "{{ controller_validate_certs }}"
+        state: absent
+
+    # Delete Project
+    - name: Delete Project
+      ansible.controller.project:
+        name: "{{ controller_project_name }}"
+        organization: "{{ organization }}"
+        controller_host: "{{ controller_host }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
+        validate_certs: "{{ controller_validate_certs }}"
+        state: absent
+
+    # Remove credential input source first (dependency)
+    - name: Delete Vault Signed SSH Machine Credential
+      ansible.controller.credential:
+        name: "{{ vault_signed_ssh_machine_credential_name }}"
+        credential_type: "Machine"
+        controller_host: "{{ controller_host }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
+        validate_certs: "{{ controller_validate_certs }}"
+        state: absent
+
+    - name: Delete AppRole Credential for Vault SSH
+      ansible.controller.credential:
+        name: "{{ vault_approle_credential_name }}"
+        credential_type: "HashiCorp Vault Signed SSH"
+        controller_host: "{{ controller_host }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
+        validate_certs: "{{ controller_validate_certs }}"
+        state: absent
