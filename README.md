@@ -282,3 +282,59 @@ Job details showing successful completion.
 Enter the EC2 instance public IP in the browser and verify that Nginx is deployed and accessible. This also includes the custom `hello from Terraform` input passed from the [aap_job_launch](https://registry.terraform.io/providers/ansible/aap/latest/docs/actions/job_launch) action to the playbook.
 
 ![nginx ui](./docs/03-testing/15-nginx-ui.png)
+
+# 5. Cleanup
+
+## 5.1 Terraform resources deployed in AWS
+
+Step 1: Navigate to the `hcp-tf-aap-vm-config` Terraform workspace settings -> `Destruction and Deletion` and choose `Queue destroy plan`
+
+![queue destroy plan](./docs/04-cleanup/01-tf-aws-resources/01-queue-destroy-plan.png)
+
+Step 2: Enter the workspace name to confirm
+
+![enter workspace name](./docs/04-cleanup/01-tf-aws-resources/02-enter-workspace-name.png)
+
+Step 3: This starts a plan to show the resources to be destroyed. Review and approve the plan.
+
+## 5.2 HCP Terraform resources
+
+In [06-tf-hcp-tf](./steps/06-tf-hcp-tf/) run `terraform destroy`, review the plan and approve the destroy.
+
+## 5.3 AAP resources
+
+Step 1: Configure AAP credentials. For example
+
+```bash
+export CONTROLLER_HOST="replace"
+export CONTROLLER_USERNAME="replace"
+export CONTROLLER_PASSWORD=replace
+```
+
+Step 2: Run the following in [07-ansible-aap-cleanup](./steps/07-ansible-aap-cleanup/) to cleanup the AAP resources like credentials, project, inventory, job template.
+
+```bash
+ansible-playbook playbook.yml
+```
+
+## 5.4 GitHub repo with Ansible playbook
+
+In [04-tf-github-ansible-playbook](./steps/04-tf-github-ansible-playbook/) run `terraform destroy`, review the plan and approve the destroy.
+
+## 5.5 Golden image
+
+In the AWS console, locate the AMI -> Actions -> Deregister AMI
+
+![deregister ami](./docs/04-cleanup/02-ami/01-deregister-ami.png)
+
+Select `Delete associated snapshots` -> `Deregister AMI`
+
+![delete associated snapshots](./docs/04-cleanup/02-ami/02-delete-associated-snapshots.png)
+
+## 5.6 Vault config
+
+In [02-tf-vault-config](./steps/02-tf-vault-config/) run `terraform destroy`, review the plan and approve the destroy.
+
+## 5.7 HCP Vault cluster
+
+In [01-tf-hcp-vault](./steps/01-tf-hcp-vault/) run `terraform destroy`, review the plan and approve the destroy.
