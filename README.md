@@ -1,5 +1,7 @@
 # Terraform Actions to launch Ansible Automation Platform (AAP) Jobs for VM configuration with secure SSH via Vault SSH Secrets Engine
 
+This repository provides demo code on how to integrate Terraform actions with Ansible Automation Platform and Vault SSH for automated VM configuration. It includes Terraform configurations for infrastructure provisioning, Packer templates for building golden images that trust Vault's SSH CA, and Ansible playbooks for configuring AAP resources and testing the end-to-end workflow. Read the accompanying [Medium blog post](https://medium.com/@glennchia7/terraform-actions-with-ansible-automation-platform-and-vault-ssh-for-vm-configuration-f7514a7c23af) for more details about the integration.
+
 # 1. Architecture
 
 ![architecture diagram](./docs/01-architecture/01-architecture-diagram.png)
