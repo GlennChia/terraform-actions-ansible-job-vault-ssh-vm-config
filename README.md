@@ -23,12 +23,12 @@ export HCP_CLIENT_SECRET=example
 export HCP_PROJECT_ID=example
 ```
 
-Step 2: Copy [terraform.tfvars.example](./steps/01-tf-hcp-vault/terraform.tfvars.example) to `terraform.tfvars` and change the environment variables accordingly.
+Step 2: In the [steps/01-tf-hcp-vault](./steps/01-tf-hcp-vault/) directory, copy [terraform.tfvars.example](./steps/01-tf-hcp-vault/terraform.tfvars.example) to `terraform.tfvars` and change the environment variables accordingly.
 
-Step 3: Run an apply, review the plan output, and approve the plan accordingly. The apply outputs the HCP Vault admin token that will be used to configure Vault in [02-tf-vault-config](./steps/02-tf-vault-config/).
+Step 3: In the [steps/01-tf-hcp-vault](./steps/01-tf-hcp-vault/) directory, run an apply, review the plan output, and approve the plan accordingly. The apply outputs the HCP Vault admin token that will be used to configure Vault in [steps/02-tf-vault-config](./steps/02-tf-vault-config/).
 
 > [!CAUTION]
-> In a live environment it is not good practice to output the Vault admin token. The token is output in this repo purely for demo purposes, such that readers can easily pass the token to the Vault provider in [02-tf-vault-config/providers.tf](./steps/02-tf-vault-config/providers.tf).
+> In a live environment it is not good practice to output the Vault admin token. The token is output in this repo purely for demo purposes, such that readers can easily pass the token to the Vault provider in [steps/02-tf-vault-config/providers.tf](./steps/02-tf-vault-config/providers.tf).
 
 ```bash
 terraform init
@@ -37,10 +37,10 @@ terraform apply
 
 ## 2.2 Vault config with SSH secrets engine
 
-Run an apply, review the plan output, and approve the plan accordingly.
+In the [steps/02-tf-vault-config](./steps/02-tf-vault-config/) directory run an apply, review the plan output, and approve the plan accordingly.
 
 > [!NOTE]
-> If there are permission errors during the apply, navigate back to [01-tf-hcp-vault](./steps/01-tf-hcp-vault/) and run a `terraform apply` in that directory. This refreshes the Vault admin token that is used to configure Vault
+> If there are permission errors during the apply, navigate back to [steps/01-tf-hcp-vault](./steps/01-tf-hcp-vault/) and run a `terraform apply` in that directory. This refreshes the Vault admin token that is used to configure Vault
 
 ```bash
 terraform init
@@ -49,9 +49,9 @@ terraform apply
 
 ## 2.3 Packer build golden image with Vault SSH CA public key
 
-Step 1: Copy [variables.pkrvars.hcl.example](./steps/03-packer/variables.pkrvars.hcl.example) to `variables.auto.pkrvars.hcl` and adjust the variables accordingly. The value of `vault_ssh_ca_public_key` is retrieved from the output of the terraform apply in [02-tf-vault-config](./steps/02-tf-vault-config/)
+Step 1: In the [steps/03-packer](./steps/03-packer/) directory, copy [variables.pkrvars.hcl.example](./steps/03-packer/variables.pkrvars.hcl.example) to `variables.auto.pkrvars.hcl` and adjust the variables accordingly. The value of `vault_ssh_ca_public_key` is retrieved from the output of the terraform apply in [steps/02-tf-vault-config](./steps/02-tf-vault-config/)
 
-Step 2: Initialize packer and build the image
+Step 2: In the [steps/03-packer](./steps/03-packer/) directory, initialize packer and build the image
 
 ```bash
 packer init .
@@ -62,9 +62,9 @@ packer build .
 
 ## 2.4 GitHub repo with Ansible playbook
 
-Step 1: Copy [terraform.tfvars.example](./steps/04-tf-github-ansible-playbook/terraform.tfvars.example) to `terraform.tfvars` and change the environment variables accordingly. GitHub credentials can use a [personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens). This token needs sufficient permissions to create, delete repositories, and write files to the repository.
+Step 1: In the [steps/04-tf-github-ansible-playbook](./steps/04-tf-github-ansible-playbook/) directory, copy [terraform.tfvars.example](./steps/04-tf-github-ansible-playbook/terraform.tfvars.example) to `terraform.tfvars` and change the environment variables accordingly. GitHub credentials can use a [personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens). This token needs sufficient permissions to create, delete repositories, and write files to the repository.
 
-Step 2: Run an apply, review the plan output, and approve the plan accordingly. The apply outputs the GitHub repository's HTML URL. This is used for `scm_url` in [05-ansible-aap-base/extra_vars.yml](./steps/05-ansible-aap-base/extra_vars.yml)
+Step 2: In the [steps/04-tf-github-ansible-playbook](./steps/04-tf-github-ansible-playbook/) directory, run an apply, review the plan output, and approve the plan accordingly. The apply outputs the GitHub repository's HTML URL. This is used for `scm_url` in [steps/05-ansible-aap-base/extra_vars.yml](./steps/05-ansible-aap-base/extra_vars.yml)
 
 > [!CAUTION]
 > In a live environment, it is not good practice to directly pass the GitHub token. Instead, sensitive credentials should be securely stored and accessed using solutions like HashiCorp Vault, which provides encrypted storage and access controls capabilities.
@@ -84,9 +84,9 @@ export CONTROLLER_USERNAME="replace"
 export CONTROLLER_PASSWORD=replace
 ```
 
-Step 2: Copy [extra_vars.yml.example](./steps/05-ansible-aap-base/extra_vars.yml.example) to `extra_vars.yml` and replace the values accordingly. These values are retrieved from the Terraform outputs in [02-tf-vault-config](./steps/02-tf-vault-config) and [04-tf-github-ansible-playbook](./steps/04-tf-github-ansible-playbook/).
+Step 2: In the [steps/05-ansible-aap-base](./steps/05-ansible-aap-base/) directory, copy [extra_vars.yml.example](./steps/05-ansible-aap-base/extra_vars.yml.example) to `extra_vars.yml` and replace the values accordingly. These values are retrieved from the Terraform outputs in [steps/02-tf-vault-config](./steps/02-tf-vault-config) and [steps/04-tf-github-ansible-playbook](./steps/04-tf-github-ansible-playbook/).
 
-Step 3: Run the following to setup the AAP resources like credentials, project, inventory, host, job template.
+Step 3: In the [steps/05-ansible-aap-base](./steps/05-ansible-aap-base/) directory, run the following to setup the AAP resources like credentials, project, inventory, host, job template.
 
 ```bash
 ansible-playbook -e @extra_vars.yml playbook.yml
@@ -209,12 +209,12 @@ Job template configuration with project, inventory, and credentials
 
 # 4. Testing
 
-Step 1: Generate HCP Terraform credentials. Refer to the [tfe_provider authentication docs](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs#authentication) for the various token options and guidance. Copy [terraform.tfvars.example](./steps/06-tf-hcp-tf/terraform.tfvars.example) to `terraform.tfvars` and change the environment variables accordingly. The variable `var_from_tf_aap_job_launch` determines the custom value passed from the Terraform action to the Ansible playbook that eventually shows up in the custom Nginx UI. GitHub credentials can use a [personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens). This token needs sufficient permissions to create, delete repositories, and write files to the repository.
+Step 1: Generate HCP Terraform credentials. Refer to the [tfe_provider authentication docs](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs#authentication) for the various token options and guidance. In the [steps/06-tf-hcp-tf](./steps/06-tf-hcp-tf/) directory, copy [terraform.tfvars.example](./steps/06-tf-hcp-tf/terraform.tfvars.example) to `terraform.tfvars` and change the environment variables accordingly. The variable `var_from_tf_aap_job_launch` determines the custom value passed from the Terraform action to the Ansible playbook that eventually shows up in the custom Nginx UI. GitHub credentials can use a [personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens). This token needs sufficient permissions to create, delete repositories, and write files to the repository.
 
 > [!CAUTION]
 > In a live environment, it is not good practice to directly pass the GitHub token, HCP TF Token, or AAP password. Instead, sensitive credentials should be securely stored and accessed using solutions like HashiCorp Vault, which provides encrypted storage and access controls capabilities.
 
-Step 2: Run an apply, review the plan output, and approve the plan accordingly.
+Step 2: In the [steps/06-tf-hcp-tf](./steps/06-tf-hcp-tf/) directory, run an apply, review the plan output, and approve the plan accordingly.
 
 ```bash
 terraform init
@@ -301,7 +301,7 @@ Step 3: This starts a plan to show the resources to be destroyed. Review and app
 
 ## 5.2 HCP Terraform resources
 
-In [06-tf-hcp-tf](./steps/06-tf-hcp-tf/) run `terraform destroy`, review the plan and approve the destroy.
+In the [steps/06-tf-hcp-tf](./steps/06-tf-hcp-tf/) directory, run `terraform destroy`, review the plan and approve the destroy.
 
 ## 5.3 AAP resources
 
@@ -313,7 +313,7 @@ export CONTROLLER_USERNAME="replace"
 export CONTROLLER_PASSWORD=replace
 ```
 
-Step 2: Run the following in [07-ansible-aap-cleanup](./steps/07-ansible-aap-cleanup/) to cleanup the AAP resources like credentials, project, inventory, job template.
+Step 2: Run the following in the [steps/07-ansible-aap-cleanup](./steps/07-ansible-aap-cleanup/) directory to cleanup the AAP resources like credentials, project, inventory, job template.
 
 ```bash
 ansible-playbook playbook.yml
@@ -321,7 +321,7 @@ ansible-playbook playbook.yml
 
 ## 5.4 GitHub repo with Ansible playbook
 
-In [04-tf-github-ansible-playbook](./steps/04-tf-github-ansible-playbook/) run `terraform destroy`, review the plan and approve the destroy.
+In the [steps/04-tf-github-ansible-playbook](./steps/04-tf-github-ansible-playbook/) directory, run `terraform destroy`, review the plan and approve the destroy.
 
 ## 5.5 Golden image
 
@@ -335,8 +335,8 @@ Select `Delete associated snapshots` -> `Deregister AMI`
 
 ## 5.6 Vault config
 
-In [02-tf-vault-config](./steps/02-tf-vault-config/) run `terraform destroy`, review the plan and approve the destroy.
+In the [steps/02-tf-vault-config](./steps/02-tf-vault-config/) directory, run `terraform destroy`, review the plan and approve the destroy.
 
 ## 5.7 HCP Vault cluster
 
-In [01-tf-hcp-vault](./steps/01-tf-hcp-vault/) run `terraform destroy`, review the plan and approve the destroy.
+In the [steps/01-tf-hcp-vault](./steps/01-tf-hcp-vault/) directory, run `terraform destroy`, review the plan and approve the destroy.
